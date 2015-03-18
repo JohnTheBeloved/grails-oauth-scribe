@@ -7,6 +7,7 @@ import org.scribe.model.Response
 import org.scribe.model.Token
 import org.scribe.model.Verb
 import org.scribe.oauth.OAuthService
+import org.scribe.model.OAuthConstants
 
 import uk.co.desirableobjects.oauth.scribe.resource.ResourceAccessor
 
@@ -17,7 +18,7 @@ class OauthResourceService {
     Response accessResource(OAuthService service, Token accessToken, ResourceAccessor ra) {
 
         OAuthRequest req = buildOauthRequest(ra.verb, ra.url, ra.connectTimeout, ra.receiveTimeout)
-        
+         
         if (ra.payload) {
           req.addPayload(ra.payload)
         } 
@@ -31,6 +32,7 @@ class OauthResourceService {
 		    req.addQuerystringParameter(name, value)
 	    }
         return signAndSend(service, accessToken, req)
+        //here
 
     }
 
@@ -39,13 +41,16 @@ class OauthResourceService {
         OAuthRequest req = new OAuthRequest(verb, url)
         req.setConnectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
         req.setReadTimeout(receiveTimeout, TimeUnit.MILLISECONDS)
+        request.addHeader(OAuthConstants.HEADER, "Basic c21hcnRpbnN1cmU6c2VjcmV0");
+         
         return req
 
     }
 
     private Response signAndSend(OAuthService service, Token accessToken, OAuthRequest req) {
 
-        service.signRequest(accessToken, req)
+        request.addHeader(OAuthConstants.HEADER, "Basic c21hcnRpbnN1cmU6c2VjcmV0");
+         service.signRequest(accessToken, req)
         return req.send()
 
     }

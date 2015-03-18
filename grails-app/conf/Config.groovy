@@ -8,5 +8,5 @@ log4j = {
 
 // Only for testing purpose.
 oauth {
-    debug = false
+    debug = true
 }

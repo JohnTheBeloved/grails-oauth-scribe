@@ -148,8 +148,9 @@ class OauthService implements InitializingBean {
     }
 
     Token getAccessToken(String serviceName, Token token, Verifier verifier) {
+   
 
-        return findService(serviceName).getAccessToken(token, verifier)
+       return findService(serviceName).getAccessToken(token, verifier)
 
     }
 

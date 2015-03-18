@@ -14,6 +14,12 @@ class OauthController {
 
     def callback() {
 
+        println params
+
+        println "GGGGOOOOOOOOTTTTTTTTTT HHHHHHHEERRRRRRREEEEEC"
+
+        
+
         String providerName = params.provider
         OauthProvider provider = oauthService.findProviderConfiguration(providerName)
 
@@ -27,6 +33,7 @@ class OauthController {
         Token requestToken = provider.oauthVersion == SupportedOauthVersion.TWO ?
             new Token(params?.code, "") :
             (Token) session[oauthService.findSessionKeyForRequestToken(providerName)]
+  
 
         if (!requestToken) {
             throw new MissingRequestTokenException(providerName)
@@ -34,12 +41,16 @@ class OauthController {
         
         Token accessToken
 
+        log.error "GHERE2"
         try {
             accessToken = oauthService.getAccessToken(providerName, requestToken, verifier)
         } catch(OAuthException){
             log.error("Cannot authenticate with oauth")
+            log.error OAuthException
             return redirect(uri: provider.failureUri)
         }
+
+        log.error accessToken.properties
         
         session[oauthService.findSessionKeyForAccessToken(providerName)] = accessToken
         session.removeAttribute(oauthService.findSessionKeyForRequestToken(providerName))
