@@ -14,11 +14,8 @@ class OauthController {
 
     def callback() {
 
-        println params
-
-        println "GGGGOOOOOOOOTTTTTTTTTT HHHHHHHEERRRRRRREEEEEC"
-
-        
+        //println params
+         
 
         String providerName = params.provider
         OauthProvider provider = oauthService.findProviderConfiguration(providerName)
@@ -40,8 +37,7 @@ class OauthController {
         }
         
         Token accessToken
-
-        log.error "GHERE2"
+  
         try {
             accessToken = oauthService.getAccessToken(providerName, requestToken, verifier)
         } catch(OAuthException){
@@ -53,9 +49,14 @@ class OauthController {
         log.error accessToken.properties
         
         session[oauthService.findSessionKeyForAccessToken(providerName)] = accessToken
-        session.removeAttribute(oauthService.findSessionKeyForRequestToken(providerName))
-
-        return redirect(uri: provider.successUri)
+        //session.removeAttribute(oauthService.findSessionKeyForRequestToken(providerName))
+       
+        def redirectUrl = params.redirect_uri ?: '/';
+        if(session[oauthService.findSessionKeyForAccessToken(providerName)]){
+             return redirect(uri: provider.successUri, params: ["redirectUrl": redirectUrl])
+        }else{
+            return redirect(uri: provider.failureUri, params: ["redirectUrl": redirectUrl])
+        }
 
     }
 
@@ -93,7 +94,8 @@ class OauthController {
         String url = oauthService.getAuthorizationUrl(providerName, requestToken)
 
         RedirectHolder.setUri(params.redirectUrl)
-        return redirect(url: url)
+        redirect(url: url,params:[redirect_uri:params.redirectUrl])
+        return
 
     }
 
